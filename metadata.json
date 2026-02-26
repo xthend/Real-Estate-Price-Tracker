@@ -1,0 +1,5 @@
+{
+  "name": "Real Estate Price Tracker",
+  "description": "A real-time dashboard tracking second-hand residential price indices across major cities, featuring trend analysis, decline calculation, and historical comparisons.",
+  "requestFramePermissions": []
+}
