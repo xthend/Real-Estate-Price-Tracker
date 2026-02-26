@@ -91,15 +91,19 @@ export function PriceChart({ data, stats, selectedCities, theme, showDecline }: 
               </tr>
             </thead>
             <tbody>
-              {activeStats.map((stat, idx) => (
-                <tr key={stat.city} className="border-b border-gray-500/10 last:border-0">
-                  <td className="py-1" style={{ color: COLORS[idx % COLORS.length] }}>{stat.city}</td>
-                  <td className="py-1">{stat.peakValue}</td>
-                  <td className="py-1">{stat.currentValue}</td>
-                  <td className="py-1 text-red-500">{stat.decline}%</td>
-                  <td className="py-1">{stat.returnToDate || '-'}</td>
-                </tr>
-              ))}
+              {selectedCities.map((city, idx) => {
+                const stat = stats.find(s => s.city === city);
+                if (!stat) return null;
+                return (
+                  <tr key={city} className="border-b border-gray-500/10 last:border-0">
+                    <td className="py-1" style={{ color: COLORS[idx % COLORS.length] }}>{city}</td>
+                    <td className="py-1">{stat.peakValue}</td>
+                    <td className="py-1">{stat.currentValue}</td>
+                    <td className="py-1 text-red-500">{stat.decline}%</td>
+                    <td className="py-1">{stat.returnToDate || '-'}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
           <div className="mt-2 text-[10px] opacity-60 text-left">
