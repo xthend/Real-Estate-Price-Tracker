@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { AVAILABLE_CITIES } from '@/lib/data';
-import { Search, Settings, Calendar, Database, Layout, MapPin, Clock } from 'lucide-react';
+import { AVAILABLE_CITIES, CITY_GROUPS } from '@/lib/data';
+import { Search, Settings, Calendar, Database, Layout, MapPin, Clock, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface SidebarProps {
   selectedCities: string[];
@@ -43,6 +43,20 @@ export function Sidebar({
   onClear
 }: SidebarProps) {
   
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
+    "直辖市": true,
+    "广东省": true,
+    "浙江省": true,
+    "江苏省": true
+  });
+
+  const toggleGroup = (group: string) => {
+    setExpandedGroups(prev => ({
+      ...prev,
+      [group]: !prev[group]
+    }));
+  };
+
   return (
     <div className={cn(
       "w-80 flex-shrink-0 flex flex-col border-r h-screen overflow-y-auto transition-colors duration-300",
@@ -122,20 +136,36 @@ export function Sidebar({
             </div>
           </div>
           <div className={cn(
-            "grid grid-cols-2 gap-2 max-h-60 overflow-y-auto p-2 rounded-md border",
+            "max-h-[400px] overflow-y-auto p-2 rounded-md border space-y-1",
             theme === 'dark' ? "bg-[#0f172a] border-gray-600" : "bg-gray-50 border-gray-200"
           )}>
-            {AVAILABLE_CITIES.map(city => (
-              <label key={city} className="flex items-center gap-2 text-sm cursor-pointer hover:opacity-80">
-                <input 
-                  type="checkbox" 
-                  checked={selectedCities.includes(city)}
-                  onChange={() => onToggleCity(city)}
-                  disabled={!selectedCities.includes(city) && selectedCities.length >= 6}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                {city}
-              </label>
+            {Object.entries(CITY_GROUPS).map(([groupName, cities]) => (
+              <div key={groupName} className="border-b border-gray-200/10 last:border-0 pb-1">
+                <button 
+                  onClick={() => toggleGroup(groupName)}
+                  className="flex items-center w-full text-left text-xs font-bold py-1 hover:opacity-80"
+                >
+                  {expandedGroups[groupName] ? <ChevronDown className="w-3 h-3 mr-1" /> : <ChevronRight className="w-3 h-3 mr-1" />}
+                  {groupName}
+                </button>
+                
+                {expandedGroups[groupName] && (
+                  <div className="grid grid-cols-2 gap-1 pl-2 mt-1">
+                    {cities.map(city => (
+                      <label key={city} className="flex items-center gap-2 text-sm cursor-pointer hover:opacity-80">
+                        <input 
+                          type="checkbox" 
+                          checked={selectedCities.includes(city)}
+                          onChange={() => onToggleCity(city)}
+                          disabled={!selectedCities.includes(city) && selectedCities.length >= 6}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        {city}
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </div>
